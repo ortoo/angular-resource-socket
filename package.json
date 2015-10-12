@@ -4,7 +4,6 @@
   "description": "Ortoo socket implementation for ortoo/angular-resource",
   "main": "socket.js",
   "dependencies": {
-    "eslint": "^1.6.0"
   },
   "devDependencies": {
     "eslint": "^1.6.0"
