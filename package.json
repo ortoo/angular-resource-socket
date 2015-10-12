@@ -1,0 +1,25 @@
+{
+  "name": "angular-resource-socket",
+  "version": "1.0.0",
+  "description": "Ortoo socket implementation for ortoo/angular-resource",
+  "main": "socket.js",
+  "dependencies": {
+    "eslint": "^1.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^1.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ortoo/angular-resource-socket.git"
+  },
+  "author": "James Sharp",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ortoo/angular-resource-socket/issues"
+  },
+  "homepage": "https://github.com/ortoo/angular-resource-socket#readme"
+}
