@@ -1,4 +1,4 @@
-module.exports = angular.module('gh.services.socket', [])
+module.exports = angular.module('or2.socket', [])
   .provider('socket', function() {
     var PUSHER_API_KEY;
     var WS_PREF;
