@@ -1,3 +1,5 @@
+var angular = require('angular');
+
 module.exports = angular.module('or2.socket', [])
   .provider('socket', function() {
     var PUSHER_API_KEY;
