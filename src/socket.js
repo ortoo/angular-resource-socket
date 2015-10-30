@@ -1,6 +1,6 @@
-var angular = require('angular');
+import angular from 'angular';
 
-module.exports = angular.module('or2.socket', [])
+export default angular.module('or2.socket', [])
   .provider('socket', function() {
     var PUSHER_API_KEY;
     var WS_PREF;
