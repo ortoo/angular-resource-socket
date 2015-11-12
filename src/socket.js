@@ -132,9 +132,9 @@ export default angular.module('or2.socket', [])
 
           req.success(function(data, statusCode) {
 
-            // A statusCode of 0 means (essentially) we're offline. Resolve as successful
+            // A statusCode of 0 or lower means (essentially) we're offline. Resolve as successful
             // but with no data
-            if (statusCode === 0) {
+            if (statusCode <= 0) {
               deferred.resolve();
               return;
             } else if (statusCode !== 200) {
@@ -188,9 +188,9 @@ export default angular.module('or2.socket', [])
 
             req.success(function(resdata, statusCode) {
 
-              // A statusCode of 0 means (essentially) we're offline. Resolve as successful
+              // A statusCode of 0 or lower means (essentially) we're offline. Resolve as successful
               // but with no data
-              if (statusCode === 0) {
+              if (statusCode <= 0) {
                 deferred.resolve();
                 return;
               } else if (statusCode !== 200) {
@@ -220,9 +220,9 @@ export default angular.module('or2.socket', [])
 
             req.success(function success(resdata, statusCode) {
 
-              // A statusCode of 0 means (essentially) we're offline. Resolve as successful
+              // A statusCode of 0 or lower means (essentially) we're offline. Resolve as successful
               // but with no data
-              if (statusCode === 0) {
+              if (statusCode <= 0) {
                 deferred.resolve();
                 return;
               } else if (statusCode !== 200) {
