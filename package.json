@@ -2,8 +2,10 @@
   "name": "@ortoo/angular-resource-socket",
   "version": "1.2.4",
   "description": "Ortoo socket implementation for ortoo/angular-resource",
-  "main": "lib/socket.js",
-  "dependencies": {},
+  "main": "lib/index.js",
+  "dependencies": {
+    "backo": "^1.1.0"
+  },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
     "babel-preset-es2015": "^6.0.12",
@@ -37,7 +39,8 @@
       "lib": "lib"
     },
     "dependencies": {
-      "angular": "jspm:angular@^1.4.7"
+      "angular": "jspm:angular@^1.4.7",
+      "backo": "npm:backo@^1.1.0"
     }
   }
 }
