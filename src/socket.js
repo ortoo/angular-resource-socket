@@ -1,4 +1,4 @@
-export default function(socketRetryInterceptorProvider) {
+export default function(socketRetryInterceptorProvider, socketCacheBusterProvider) {
   'ngInject';
   var PUSHER_API_KEY;
   var WS_PREF;
@@ -9,6 +9,7 @@ export default function(socketRetryInterceptorProvider) {
   function setApiEndpoint(endpoint) {
     WS_PREF = endpoint;
     socketRetryInterceptorProvider.setApiEndpoint(endpoint);
+    socketCacheBusterProvider.setApiEndpoint(endpoint);
   }
 
   function setPusherApiKey(key) {
@@ -111,8 +112,7 @@ export default function(socketRetryInterceptorProvider) {
         var deferred = SocketDefer();
         var params = {
           _idsonly: true,
-          _spaging: true,
-          _t: new Date().getTime()
+          _spaging: true
         };
 
         if (socketId) {
@@ -179,7 +179,6 @@ export default function(socketRetryInterceptorProvider) {
             params._sid = socketId;
           }
 
-          params._t = new Date().getTime();
           req = $http.post(this.endpoint + '/bulk', {
             ids: ids
           }, {
@@ -213,7 +212,6 @@ export default function(socketRetryInterceptorProvider) {
             params._sid = socketId;
           }
 
-          params._t = new Date().getTime();
           req = $http.get(this.endpoint + '/' + id, {
             params: params
           });
@@ -252,7 +250,6 @@ export default function(socketRetryInterceptorProvider) {
           params._sid = socketId;
         }
 
-        params._t = new Date().getTime();
         payload[this.rootKey] = data;
 
         var req = $http.post(this.endpoint, payload, {
@@ -280,9 +277,7 @@ export default function(socketRetryInterceptorProvider) {
       this.patch = function patch(id, patchData) {
         var deferred = SocketDefer();
         var payload = {};
-        var params = {
-          _t: new Date().getTime()
-        };
+        var params = {};
 
         payload[this.rootKey] = patchData;
 
@@ -316,9 +311,7 @@ export default function(socketRetryInterceptorProvider) {
 
         var deferred = SocketDefer();
         var payload = {};
-        var params = {
-          _t: new Date().getTime()
-        };
+        var params = {};
 
         payload[this.rootKey] = data;
 
@@ -350,9 +343,7 @@ export default function(socketRetryInterceptorProvider) {
 
       this.remove = function remove(id) {
         var deferred = SocketDefer();
-        var params = {
-          _t: new Date().getTime()
-        };
+        var params = {};
 
         if (socketId) {
           params._sid = socketId;

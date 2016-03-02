@@ -1,5 +1,7 @@
 import Backoff from 'backo';
 
+import {isWsReq} from './utils.js';
+
 export default function() {
   'ngInject';
 
@@ -33,7 +35,7 @@ export default function() {
       var code = response.status;
 
       // Retry on non-500, 5xx errors
-      if (code > 500 && code < 600 && isWsReq(response.config.url)) {
+      if (code > 500 && code < 600 && isWsReq(API_ENDPOINT, response.config.url)) {
         return maybeRetry(response);
       } else {
         return $q.resolve(response);
@@ -57,21 +59,6 @@ export default function() {
 
       retry.count++;
       return $timeout(() => resendRequest(config), retry.backo.duration());
-    }
-
-    function isWsReq(url) {
-
-      if (!API_ENDPOINT) {
-        return false;
-      }
-
-      // Is the url for the api? - We check by running the url through an a element (nice...)
-      var urlObj = new URL(url);
-      var urlHost = urlObj.host;
-      var urlPath = urlObj.pathname;
-      var wsHost = API_ENDPOINT.host;
-      var wsPath = API_ENDPOINT.pathname;
-      return ((urlHost === wsHost) && (urlPath.indexOf(wsPath) === 0));
     }
 
     function resendRequest(config) {
