@@ -32,8 +32,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
     var pusher;
     if (Pusher && PUSHER_API_KEY) {
       pusher = new Pusher(PUSHER_API_KEY, {
-        encrypted: true,
-        cluster: 'eu'
+        encrypted: true
       });
 
       pusher.connection.bind('failed', function failed() {
