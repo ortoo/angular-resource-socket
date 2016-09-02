@@ -1,3 +1,5 @@
+import Pusher from 'pusher-js';
+
 export default function(socketRetryInterceptorProvider, socketCacheBusterProvider) {
   'ngInject';
   var PUSHER_API_KEY;
@@ -20,8 +22,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
                               $log,
                               $location,
                               $http,
-                              $q,
-                              $window) {
+                              $q) {
     'ngInject';
 
     var allSockets = {};
@@ -29,11 +30,10 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
     var socketId = null;
 
     var pusher;
-    var Pusher = $window.Pusher;
     if (Pusher && PUSHER_API_KEY) {
       pusher = new Pusher(PUSHER_API_KEY, {
-        encrypted: true
-        // cluster: 'eu'
+        encrypted: true,
+        cluster: 'eu'
       });
 
       pusher.connection.bind('failed', function failed() {

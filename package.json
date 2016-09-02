@@ -4,7 +4,8 @@
   "description": "Ortoo socket implementation for ortoo/angular-resource",
   "main": "lib/index.js",
   "dependencies": {
-    "backo": "^1.1.0"
+    "backo": "^1.1.0",
+    "pusher-js": "^3.2.1"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",
