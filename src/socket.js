@@ -1,21 +1,13 @@
-import Pusher from 'pusher-js';
-
 export default function(socketRetryInterceptorProvider, socketCacheBusterProvider) {
   'ngInject';
-  var PUSHER_API_KEY;
   var WS_PREF;
 
-  this.setPusherApiKey = setPusherApiKey;
   this.setApiEndpoint = setApiEndpoint;
 
   function setApiEndpoint(endpoint) {
     WS_PREF = endpoint;
     socketRetryInterceptorProvider.setApiEndpoint(endpoint);
     socketCacheBusterProvider.setApiEndpoint(endpoint);
-  }
-
-  function setPusherApiKey(key) {
-    PUSHER_API_KEY = key;
   }
 
   this.$get = function socket($rootScope,
@@ -26,54 +18,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
     'ngInject';
 
     var allSockets = {};
-    var pusherSupported = true;
-    var socketId = null;
-
-    var pusher;
-    if (Pusher && PUSHER_API_KEY) {
-      pusher = new Pusher(PUSHER_API_KEY, {
-        encrypted: true
-      });
-
-      pusher.connection.bind('failed', function failed() {
-        pusherSupported = false;
-        SocketFactory.pushSupported = false;
-      });
-
-      pusher.connection.bind('connected', function connected() {
-        socketId = SocketFactory.socketId = pusher.connection.socket_id;
-        var channel = pusher.subscribe('or2-socket-' + socketId);
-
-        // Start listening for events on the channel
-        channel.bind('object updated', function(data) {
-          runSocketHandler(data.model, 'modified get', function(handler) {
-            handler(data._id);
-          });
-        });
-
-        channel.bind('query updated', function(data) {
-          runSocketHandler(data.model, 'modified query', function(handler) {
-            handler(data.data.qryId, {
-              ids: data.data.result,
-              pagingOpts: data.data.pagingOpts
-            });
-          });
-        });
-      });
-    } else {
-      pusherSupported = false;
-    }
-
-
-
-    function runSocketHandler(model, eventName, callback) {
-      var socket = allSockets[model];
-      if (socket && socket.handlers[eventName]) {
-        socket.handlers[eventName].forEach(function(handler) {
-          callback(handler);
-        });
-      }
-    }
 
     var handleErr = function handleErr(data) {
       var err = data && data.err;
@@ -82,9 +26,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
         return $log.error(err);
       }
     };
-
-    var connectionEvents = ['initialized', 'connecting', 'connected', 'unavailable', 'failed',
-    'disconnected'];
 
     function SocketDefer() {
 
@@ -102,11 +43,10 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
       this.rootKeyPlural = rootKeyPlural;
       this.endpoint = WS_PREF + this.namespace;
       this.handlers = {};
-      this.subscriptions = {};
 
       var self = this;
 
-      this.query = function query(qryObj, replaces) {
+      this.query = function query(qryObj) {
 
         var deferred = SocketDefer();
         var params = {
@@ -114,16 +54,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
           _spaging: true
         };
 
-        if (socketId) {
-          params._sid = socketId;
-        }
-
-        // Are we replacing an existing qryId?
-        if (replaces) {
-          params._replace = replaces;
-        }
-
-        // Explicityl stringify the queryObj here because we don't want angular removing
+        // Explicitly stringify the queryObj here because we don't want angular removing
         // any of our keys (they're likely to have '$' in them)
         var req = $http.post(this.endpoint + '/query', JSON.stringify(qryObj), {
           params: params
@@ -148,10 +79,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
             prev: data.prev
           };
 
-          var qryId = data.qryId;
-
           return deferred.resolve({
-            qryId: qryId,
             data:  {
               ids: ids,
               pagingOpts: pagingOpts
@@ -173,10 +101,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
         if (Array.isArray(ids)) {
           params = {};
-
-          if (socketId) {
-            params._sid = socketId;
-          }
 
           req = $http.post(this.endpoint + '/bulk', {
             ids: ids
@@ -206,10 +130,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
         } else {
           var id = ids;
           params = {};
-
-          if (socketId) {
-            params._sid = socketId;
-          }
 
           req = $http.get(this.endpoint + '/' + id, {
             params: params
@@ -245,10 +165,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
         var params = {};
         var payload = {};
 
-        if (socketId) {
-          params._sid = socketId;
-        }
-
         payload[this.rootKey] = data;
 
         var req = $http.post(this.endpoint, payload, {
@@ -280,10 +196,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
         payload[this.rootKey] = patchData;
 
-        if (socketId) {
-          params._sid = socketId;
-        }
-
         var req = $http.patch(this.endpoint + '/' + id, payload, {
           params: params
         });
@@ -314,10 +226,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
         payload[this.rootKey] = data;
 
-        if (socketId) {
-          params._sid = socketId;
-        }
-
         var req = $http.post(this.endpoint + '/' + id, payload, {
           params: params
         });
@@ -344,10 +252,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
         var deferred = SocketDefer();
         var params = {};
 
-        if (socketId) {
-          params._sid = socketId;
-        }
-
         var req = $http['delete'](this.endpoint + '/' + id, {
           params: params
         });
@@ -368,35 +272,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
         return deferred.promise;
       };
-
-      this.on = function on(eventName, callback) {
-
-        if (!pusherSupported) {
-          return;
-        }
-
-        if (~connectionEvents.indexOf(eventName)) {
-          return pusher.connection.bind(eventName, callback);
-        } else {
-          var handlers;
-          if(this.handlers[eventName]) {
-            handlers = this.handlers[eventName];
-          } else {
-            handlers = this.handlers[eventName] = [];
-          }
-
-          handlers.push(callback);
-        }
-      };
-
-      this.reset = function reset() {
-        var handlers = this.handlers.reset;
-        if (handlers) {
-          handlers.forEach(function(handler) {
-            handler();
-          });
-        }
-      };
     }
 
     // Create the socket factory
@@ -408,14 +283,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
       return allSockets[rootKey];
     }
-
-    SocketFactory.pushSupported = pusherSupported;
-
-    SocketFactory.resetAll = function resetAll() {
-      allSockets.forEach(function(socket){
-        socket.reset();
-      });
-    };
 
     return SocketFactory;
 
