@@ -1,6 +1,6 @@
 {
   "name": "@ortoo/angular-resource-socket",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Ortoo socket implementation for ortoo/angular-resource",
   "main": "lib/index.js",
   "dependencies": {
