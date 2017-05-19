@@ -60,7 +60,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
           params: params
         });
 
-        req.success(function(data, statusCode) {
+        req.then(function({data, status: statusCode}) {
 
           // A statusCode of 0 or lower means (essentially) we're offline. Resolve as successful
           // but with no data
@@ -85,9 +85,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
               pagingOpts: pagingOpts
             }
           });
-        });
-
-        req.error(function(err) {
+        }).catch(function(err) {
           deferred.reject(err);
         });
 
@@ -108,7 +106,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
             params: params
           });
 
-          req.success(function(resdata, statusCode) {
+          req.then(function({data: resdata, status: statusCode}) {
 
             // A statusCode of 0 or lower means (essentially) we're offline. Resolve as successful
             // but with no data
@@ -122,9 +120,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
             var data = resdata[self.rootKeyPlural];
             deferred.resolve(data);
-          });
-
-          req.error(function(err) {
+          }).catch(function(err) {
             deferred.reject(err);
           });
         } else {
@@ -135,7 +131,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
             params: params
           });
 
-          req.success(function success(resdata, statusCode) {
+          req.then(function success({data: resdata, status: statusCode}) {
 
             // A statusCode of 0 or lower means (essentially) we're offline. Resolve as successful
             // but with no data
@@ -149,9 +145,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
             var data = resdata[self.rootKey];
             deferred.resolve(data);
-          });
-
-          req.error(function(err) {
+          }).catch(function(err) {
             deferred.reject(err);
           });
         }
@@ -171,7 +165,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
           params: params
         });
 
-        req.success(function success(resdata, statusCode) {
+        req.then(function success({data: resdata, status: statusCode}) {
 
           if (statusCode !== 200) {
             deferred.reject(resdata);
@@ -180,9 +174,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
           data = resdata[self.rootKey];
           deferred.resolve(data);
-        });
-
-        req.error(function(err) {
+        }).catch(function(err) {
           deferred.reject(err);
         });
 
@@ -200,7 +192,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
           params: params
         });
 
-        req.success(function(response, statusCode) {
+        req.then(function({data: response, status: statusCode}) {
 
           if (statusCode !== 200) {
             deferred.reject(response);
@@ -209,9 +201,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
           var data = response[self.rootKey];
           deferred.resolve(data);
-        });
-
-        req.error(function(err) {
+        }).catch(function(err) {
           deferred.reject(err);
         });
 
@@ -230,7 +220,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
           params: params
         });
 
-        req.success(function(response, statusCode) {
+        req.then(function({data: response, status: statusCode}) {
 
           if (statusCode !== 200) {
             deferred.reject(response);
@@ -239,9 +229,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
 
           data = response[self.rootKey];
           deferred.resolve(data);
-        });
-
-        req.error(function(err) {
+        }).catch(function(err) {
           deferred.reject(err);
         });
 
@@ -256,7 +244,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
           params: params
         });
 
-        req.success(function(data, statusCode) {
+        req.then(function({data, status: statusCode}) {
 
           if (statusCode !== 200) {
             deferred.reject(data);
@@ -264,9 +252,7 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
           }
 
           deferred.resolve(data.success);
-        });
-
-        req.error(function(err) {
+        }).catch(function(err) {
           deferred.reject(err);
         });
 
