@@ -1,4 +1,4 @@
-export default function(socketRetryInterceptorProvider, socketCacheBusterProvider) {
+export default function(socketRetryInterceptorProvider) {
   'ngInject';
   var WS_PREF;
 
@@ -7,7 +7,6 @@ export default function(socketRetryInterceptorProvider, socketCacheBusterProvide
   function setApiEndpoint(endpoint) {
     WS_PREF = endpoint;
     socketRetryInterceptorProvider.setApiEndpoint(endpoint);
-    socketCacheBusterProvider.setApiEndpoint(endpoint);
   }
 
   this.$get = function socket($rootScope,
