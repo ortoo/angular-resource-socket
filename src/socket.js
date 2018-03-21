@@ -55,7 +55,7 @@ export default function(socketRetryInterceptorProvider) {
 
         // Explicitly stringify the queryObj here because we don't want angular removing
         // any of our keys (they're likely to have '$' in them)
-        var req = $http.post(this.endpoint + '/query', JSON.stringify(qryObj), {
+        var req = $http.put(this.endpoint + '/query', JSON.stringify(qryObj), {
           params: params
         });
 
@@ -99,7 +99,7 @@ export default function(socketRetryInterceptorProvider) {
         if (Array.isArray(ids)) {
           params = {};
 
-          req = $http.post(this.endpoint + '/bulk', {
+          req = $http.put(this.endpoint + '/bulk', {
             ids: ids
           }, {
             params: params
